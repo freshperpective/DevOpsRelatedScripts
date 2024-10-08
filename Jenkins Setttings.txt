@@ -1,0 +1,112 @@
+For making folders and structure ---->  
+
+cd/
+cd Jenkins_Deployment
+mkdir 3F_Deployment
+cd 3F_Deployment
+mkdir TOS
+.....................................
+STANDARD TOS9x1
+
+
+rmdir /S /Q D:\Jenkins_Deployment\TOS9X1_Deployment\TOS9X1
+Xcopy D:\Jenkins\workspace\STANDARD_TOS9X1\TOS9X1\obj\Release\Package\PackageTmp D:\Jenkins_Deployment\TOS9X1_Deployment\TOS9X1 /E /H /C /I
+
+
+Xcopy D:\Jenkins\workspace\STANDARD_TOS9X1\TOS9X1\SAVIORLIC.LIC D:\Jenkins_Deployment\TOS9X1_Deployment\TOS9X1 /E /H /C /I
+
+C:
+cd windows
+cd system32
+cd inetsrv
+appcmd delete site "TOS9X1"
+APPCMD add site /name:TOS9X1 /bindings:"http/*:8787:" /physicalPath:"D:\Jenkins_Deployment\TOS9X1_Deployment\TOS9X1"
+
+
+
+Archiving--->  TOS9X1\obj\Release\Package\PackageTmp/**/*.*
+
+---------------------------------------------------------------------------
+SESA Vedanta WMS
+
+rmdir /S /Q G:\Jenkins_Deployment\VEDANTA_WMS_Deployment\WMS121
+Xcopy "G:\Jenkins\workspace\SRS_VEDANTA_WMS121_028302\WMS121\PrecompiledWeb\localhost_51929" G:\Jenkins_Deployment\VEDANTA_WMS_Deployment\WMS121 /E /H /C /I
+
+Xcopy G:\Jenkins\workspace\SRS_VEDANTA_WMS121_028302\WMS121\SAVIORLIC.LIC G:\Jenkins_Deployment\VEDANTA_WMS_Deployment\WMS121 /E /H /C /I 
+
+C:
+cd windows
+cd system32
+cd inetsrv
+appcmd delete site "VedantaWMS"
+APPCMD add site /name:VedantaWMS /bindings:"http/*:8789:" /physicalPath:"G:\Jenkins_Deployment\VEDANTA_WMS_Deployment\WMS121"
+
+..................................................................................
+LMWIND TOS and TOSKIOSK
+
+
+
+rmdir /S /Q G:\Jenkins_Deployment\LMWIND_Deployment\TOS
+Xcopy "G:\Jenkins\workspace\LM_WIND_TOS721P_028618\TOS7X1_Rel10\PrecompiledWeb\localhost_52414" G:\Jenkins_Deployment\LMWIND_Deployment\TOS /E /H /C /I
+
+rmdir /S /Q G:\Jenkins_Deployment\LMWIND_Deployment\TOSKIOSK
+Xcopy "G:\Jenkins\workspace\LM_WIND_TOS721P_028618\TOS7X1_Rel10_KIOSK\PrecompiledWeb\localhost_56625" G:\Jenkins_Deployment\LMWIND_Deployment\TOSKIOSK /E /H /C /I
+
+C:
+cd windows
+cd system32
+cd inetsrv
+appcmd delete site "LMWINDTOS"
+APPCMD add site /name:LMWINDTOS /bindings:"http/*:52414:" /physicalPath:"G:\Jenkins_Deployment\LMWIND_Deployment\TOS"
+appcmd delete site "LMWINDKIOSK"
+APPCMD add site /name:LMWINDKIOSK /bindings:"http/*:56625:" /physicalPath:"G:\Jenkins_Deployment\LMWIND_Deployment\TOSKIOSK"
+
+......................................................................................
+3F Industries TOS
+
+rmdir /S /Q G:\Jenkins_Deployment\3F_Deployment\TOS
+Xcopy "G:\Jenkins\workspace\SRS_3F INDUSTRIES TOS721P Rel10 SRS1.0.1 007174\TOS7X1Rel10\PrecompiledWeb\localhost_53209" G:\Jenkins_Deployment\3F_Deployment\TOS /E /H /C /I
+
+C:
+cd windows
+cd system32
+cd inetsrv
+appcmd delete site "3FTOS"
+APPCMD add site /name:3FTOS /bindings:"http/*:53209:" /physicalPath:"G:\Jenkins_Deployment\3F_Deployment\TOS"
+......................................................................................
+Ambuja Cements CLM
+
+rmdir /S /Q G:\Jenkins_Deployment\Ambuja_Deployment\CLM
+Xcopy "G:\Jenkins\workspace\SRS_AMBUJA_CEMENTS_CLM_016360_016521\CLM_REL_3\PrecompiledWeb\localhost_58099" G:\Jenkins_Deployment\Ambuja_Deployment\CLM /E /H /C /I
+
+C:
+cd windows
+cd system32
+cd inetsrv
+appcmd delete site "AMBUJACLM"
+APPCMD add site /name:AMBUJACLM /bindings:"http/*:58099:" /physicalPath:"G:\Jenkins_Deployment\Ambuja_Deployment\CLM"
+...................................................
+INDO RAMA TOS
+
+cd/
+cd Jenkins_Deployment
+mkdir INDORAMA_Deployment
+cd INDORAMA_Deployment
+mkdir TOS
+
+rmdir /S /Q G:\Jenkins_Deployment\INDORAMA_Deployment\TOS
+Xcopy "G:\Jenkins\workspace\SRS_INDO_RAMA_TOS731P_Rel10_028508\TOS7X1Rel10\PrecompiledWeb\localhost_51759" GG:\Jenkins_Deployment\INDORAMA_Deployment\TOS /E /H /C /I
+
+C:
+cd windows
+cd system32
+cd inetsrv
+appcmd delete site "INDORAMATOS"
+APPCMD add site /name:INDORAMATOS /bindings:"http/*:51759:" /physicalPath:"G:\Jenkins_Deployment\INDORAMA_Deployment\TOS"
+.........................
+STANDARD_WMS1x1_Rel3
+
+
+
+
+.............................................................

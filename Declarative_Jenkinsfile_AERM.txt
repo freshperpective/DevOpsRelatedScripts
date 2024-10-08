@@ -1,0 +1,246 @@
+@Library('jenkins_shared_library') _
+pipeline {
+    agent {
+  label 'DCD'
+}
+
+environment{
+    WebConfigPath = "wsReaderMngMVC\\wsReaderMngMVC\\"
+    BuildPath = "wsReaderMngMVC\\wsReaderMngMVC\\wsReaderMngMVC.csproj"
+    PublishProfile = "wsReaderMngMVC\\wsReaderMngMVC\\Properties\\PublishProfiles\\FolderProfile.pubxml"
+    //BuildPathAPI = 'WMSAPI\\WMSAPI\\WMSAPI.csproj'
+    //PublishProfileAPI = 'FolderProfile.pubxml'
+    SingleDllPath = 'wsReaderMngMVC\\wsReaderMngMVC\\obj\\Debug\\Package\\PackageTmp'
+    Publishedfile = 'wsReaderMngMVC/wsReaderMngMVC/obj/Debug/Package/PackageTmp'
+    WebsiteName = 'AUTOMOBILE_AERM'
+    WebsitePort = 4182
+    //AgentStatus = 0
+    
+}
+
+options {
+  timestamps()
+  copyArtifactPermission 'AERM_014182_Encryption'
+}
+
+stages {
+    /*
+    stage('CleanWS') {
+  steps {
+      retry(3){
+      cleanWs()
+      }
+      
+  }
+    // One or more steps need to be included within the steps block.
+  }
+        stage('Checkout') {
+  steps {
+      bbs_checkout branches: [[name: '/Develop']], credentialsId: 'BitbucketAdmin', id: 'b52710a3-b1dc-4e1f-8068-32b3fcb854b5', projectName: 'SRS_EMAMI FRANK_019166', repositoryName: 'EMAMI FRANK_TOS721_Rel10_SRS 5.0.1_019166', serverId: '6938e46b-e49b-4531-be66-61d57503b5cd', changelog: true
+    // One or more steps need to be included within the steps block.
+       }
+    }*/
+    stage('Build'){
+        steps{
+            //Restore packages
+           // bat 'dotnet restore WMS\\WMS\\WMS.csproj'
+            //WebConfig Edit
+            powershell '''cd $env:WebConfigPath
+
+(Get-Content -path "Web.config" -Raw) | ForEach-Object {
+    $_.replace(\'debug="true"\',\'debug="false"\').replace(\'requireSSL="false"\',\'requireSSL="true"\').replace(\'directory browse="true"\',\'directory browse="false"\').replace(\'192.168.10.\',\'192.1.1.\').replace(\'saviorstj\',\'j\').replace(\'removeServerHeader="true"\',\' \')}|Set-Content -Path "Web.config"'''
+
+            
+            //Build Step
+            bat '''Msbuild "%WORKSPACE%\\%BuildPath%" /p:DeployOnBuild=true /p:PublishProfile="%WORKSPACE%\\%PublishProfile%" '''
+            //bat "MSBuild %WORKSPACE%\\%BuildPathAPI% /p:DeployOnBuild=true /p:PublishProfile=%PublishProfileAPI%"
+
+        }
+    }
+   stage('Artifacts'){
+       steps{
+           //bat 'ren "WMS\\WMS\\obj\\Debug\\Package\\PackageTmp" "%BUILD_ID%" '
+            //bat 'ren "WMSAPI\\WMSAPI\\obj\\Debug\\Package\\PackageTmp" "%BUILD_ID%" '
+           
+          stash allowEmpty: true, includes: '**/*.prjx', name: 'prjx'		 
+          archiveArtifacts artifacts: 'wsReaderMngMVC/wsReaderMngMVC/obj/Debug/Package/PackageTmp/**/*.*', followSymlinks: false
+
+	
+            
+       }
+   }/*
+   stage('Encryption'){
+       agent{
+           label 'Jenkins_Build_Slave'
+       }
+     options { skipDefaultCheckout() }
+       steps{
+
+		cleanWs()
+           copyArtifacts fingerprintArtifacts: true, projectName: '${JOB_BASE_NAME}', selector: specific('${BUILD_ID}')
+           unstash 'prjx'
+		
+           bat ''' envelope.com -p AERM.prjx  ''' 
+      		//	bat ''' envelope.com -p WMSAPI.prjx '''
+      			bat '''del %SingleDllPath%\\bin\\wsReaderMngMVC.dll '''
+      		//	bat '''del WMSAPI\\WMSAPI\\obj\\Debug\\Package\\PackageTmp\\bin\\WMSAPI.dll '''
+      			bat '''del %SingleDllPath%\\bin\\hasp_windows_104777.dll '''
+				bat '''del %SingleDllPath%\\bin\\hasp_windows_x64_104777.dll '''
+				bat '''del %SingleDllPath%\\bin\\haspvlib_104777.dll '''
+				bat '''del %SingleDllPath%\\bin\\haspdnert.dll '''
+				bat '''del %SingleDllPath%\\bin\\haspdnert_x64.dll '''
+				bat '''del %SingleDllPath%\\bin\\hasp_rt.exe '''
+			//	bat '''del WMSAPI\\WMSAPI\\obj\\Debug\\Package\\PackageTmp\\bin\\haspdnert.dll '''
+			//	bat '''del WMSAPI\\WMSAPI\\obj\\Debug\\Package\\PackageTmp\\bin\\haspdnert_x64.dll '''
+			//	bat '''del WMSAPI\\WMSAPI\\obj\\Debug\\Package\\PackageTmp\\bin\\hasp_rt.exe '''
+			//	bat '''del WMSAPI\\WMSAPI\\obj\\Debug\\Package\\PackageTmp\\bin\\hasp_windows_104777.dll '''
+			//	bat '''del WMSAPI\\WMSAPI\\obj\\Debug\\Package\\PackageTmp\\bin\\hasp_windows_x64_104777.dll '''
+			//	bat '''del WMSAPI\\WMSAPI\\obj\\Debug\\Package\\PackageTmp\\bin\\haspvlib_104777.dll '''
+				//bat '''del WMSAPI\\WMSAPI\\obj\\Debug\\Package\\PackageTmp\\bin\\hasp_windows_104777.dll '''
+				//bat '''del WMSAPI\\WMSAPI\\obj\\Debug\\Package\\PackageTmp\\bin\\hasp_windows_x64_104777.dll '''
+				//bat '''del WMSAPI\\WMSAPI\\obj\\Debug\\Package\\PackageTmp\\bin\\haspvlib_104777.dll'''
+         		//bat "rd /s /q %SingleDllPath%\\DLL_Enc"
+			bat "mkdir %SingleDllPath%\\DLL_Enc"
+      			bat """ call Xcopy Out\\*.* %SingleDllPath%\\DLL_Enc\\ /E /H /C /I /Q /S"""
+      			bat """ call Xcopy Out\\*.* %SingleDllPath%\\bin\\ /E /H /C /I /Q /S"""      
+      		//	bat """ call Xcopy Out_WMS_API\\*.* WMSAPI\\WMSAPI\\obj\\Debug\\Package\\PackageTmp\\bin\\ /E /H /C /I /Q /S"""
+      			
+      		 archiveArtifacts artifacts: 'wsReaderMngMVC/wsReaderMngMVC/obj/Debug/Package/PackageTmp//*.*', followSymlinks: false
+
+      			       }
+   }*/
+   stage('Deployment')
+   {
+	options { skipDefaultCheckout() }
+
+       when {
+                 beforeAgent true
+                 expression {
+                     return nodesByLabel('WINDOWS_2016').size() > 0
+                 }
+
+             }
+             
+       agent{
+           label 'WINDOWS_2016'
+       }
+       
+	
+       
+  
+  steps{
+      
+      catchError(buildResult: 'SUCCESS', stageResult: 'ABORTED'){
+      cleanWs()
+          
+          copyArtifacts fingerprintArtifacts: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_ID}')
+    
+      powershell '''Import-Module IISAdministration
+
+$manager = Get-IISServerManager
+
+if ($manager.ApplicationPools["${env:WebsiteName}"] -eq $null) {
+    # Application pool does not exist, create it...
+    # ...
+
+	$pool = $manager.ApplicationPools.Add("${env:WebsiteName}")
+
+	$pool.ManagedPipelineMode = "Integrated"
+	$pool.ManagedRuntimeVersion = "v4.0"
+	$pool.Enable32BitAppOnWin64 = $false
+	$pool.AutoStart = $true
+	$pool.StartMode = "OnDemand"
+	$pool.ProcessModel.IdentityType = "ApplicationPoolIdentity"
+   
+}
+
+if ($manager.Sites["${env:WebsiteName}"] -eq $null) {
+
+    # Site does not exist, create it...
+    # ...
+
+	$site = $manager.Sites.Add("${env:WebsiteName}", "https", "*:${env:WebsitePort}:", "${env:WORKSPACE}\\${env:SingleDllPath}")
+
+	$site.Id= ${env:WebsitePort}
+   
+	
+#Assign AppPool to Site...
+
+	$website = $manager.Sites["${env:WebsiteName}"]
+
+	$website.Applications["/"].ApplicationPoolName = "${env:WebsiteName}"
+   
+    
+    $guid = [guid]::NewGuid().ToString("B")
+netsh http add sslcert ipport=0.0.0.0:$ENV:WebsitePort certhash=1444F259F420F38FEE0A710951A76ED31ED1686C appid="$guid"
+	
+}
+
+#if ($manager.Sites["Website1"].Applications["/MyApp"] -eq $null) {
+    # App/virtual directory does not exist, create it...
+    # ...
+#}
+
+# Change for a top-level website
+$manager.Sites["${env:WebsiteName}"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\${env:SingleDllPath}"
+
+# Change for an app within a website
+#$manager.Sites["Website1"].Applications["/MyApp"].VirtualDirectories["/"].PhysicalPath = "C:\\Sites\\Website1\\1.1"
+
+
+
+$manager.CommitChanges()'''      
+     
+          
+          
+          //Copying LIC File
+   /*  bat '''call F:
+      cd "F:\\STANDARD_MEMORY\\STANDARD_MEMORY\\TOS921 PR"
+      del "%WORKSPACE%\\TOS9X1\\obj\\Debug\\Package\\PackageTmp\\SAVIORLIC.LIC"
+      call Xcopy SAVIORLIC.LIC %WORKSPACE%\\TOS9X1\\obj\\Debug\\Package\\PackageTmp\\ /E /H /C /I /Q /S'''  */
+      
+      }
+  }
+  
+  
+   }
+}
+    post {
+        
+       success{
+           
+           echo 'Successful Run'
+                   //build wait: false, job: 'STANDARD_WMS1x1_Project_Sonar'  
+       }
+            
+ // always {
+         // }
+    
+  
+ // unstable {
+    // One or more steps need to be included within each condition's block.
+  //}
+  cleanup {
+      cleanWs()
+    // One or more steps need to be included within each condition's block.
+  }
+ changed {
+     script{ 
+     def var = new Mailto()
+   	 //var.erp()
+     	 var.qas()
+	 //var.sdd()
+	 //var.edd()
+   // One or more steps need to be included within each condition's block.
+ }}
+ failure{
+	script{ 
+     def var = new Mailto()
+   	 //var.erp()
+     	 var.qas()
+	 //var.sdd()
+	 //var.edd()
+   // One or more steps need to be included within each condition's block.
+ }}
+}
+}
