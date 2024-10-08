@@ -1,0 +1,602 @@
+@Library('jenkins_shared_library') _
+pipeline {
+    agent {
+ // label 'Jenkins_Build_Slave1'
+      label 'Jenkins_Build_Slave1'
+}
+
+environment{
+    WebConfigPath = "TOS7x1Rel7\\"
+    BuildPath = "TOS7x1Rel7\\website.publishproj"
+    PublishProfile = "TOS7x1Rel7\\App_Data\\PublishProfiles\\Savior.pubxml"
+    //BuildPathAPI = 'WMSAPI\\WMSAPI\\WMSAPI.csproj'
+    //PublishProfileAPI = 'FolderProfile.pubxml'
+    SingleDllPath = 'TOS7x1Rel7\\obj\\Debug\\Package\\PackageTmp'
+    Publishedfile = 'TOS7x1Rel7/obj/Debug/Package/PackageTmp'
+    //WebsiteName = 'AUTOMOBILE_TOS721'
+    //WebsitePort = 4182
+    //AgentStatus = 0
+    
+}
+
+options {
+  timestamps()
+  copyArtifactPermission 'HRMS_CLOUD_CORE6_Pipeline,HRMS_Accunetix,HRMS_CLOUD_CORE6_2019'
+}
+
+stages {
+    /*
+    stage('CleanWS') {
+  steps {
+      retry(3){
+      cleanWs()
+      }
+      
+  }
+    // One or more steps need to be included within the steps block.
+  }
+        stage('Checkout') {
+  steps {
+      bbs_checkout branches: [[name: '/Develop']], credentialsId: 'BitbucketAdmin', id: 'b52710a3-b1dc-4e1f-8068-32b3fcb854b5', projectName: 'SRS_EMAMI FRANK_019166', repositoryName: 'EMAMI FRANK_TOS721_Rel10_SRS 5.0.1_019166', serverId: '6938e46b-e49b-4531-be66-61d57503b5cd', changelog: true
+    // One or more steps need to be included within the steps block.
+       }
+    }*/
+    stage('Build'){
+        steps{
+          
+          script{ 
+            
+           bat '''   	
+    			dotnet publish %WORKSPACE%\\HRMSCore6\\Access\\Access.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\Access.Api\\Access.Api.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\Administration\\Administration.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\Administration.Api\\Administration.Api.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\apiGateway\\apiGateway.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\Canteen\\Canteen.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\Canteen.Api\\Canteen.Api.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\DutyRoster\\DutyRoster.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\DutyRoster.Api\\DutyRoster.Api.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\EmpMaster\\EmpMaster.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\EmpMaster.Api\\EmpMaster.Api.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\ESSOperation\\ESSOperation.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\ESSOperation.Api\\ESSOperation.Api.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\Reports\\Reports.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\Reports.Api\\Reports.Api.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\TimeOffice\\TimeOffice.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\TimeOffice.Api\\TimeOffice.Api.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\DataProtection.Api\\DataProtection.Api.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\LeaveCredit.API\\LeaveCredit.API.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\LeaveDebit.Api\\LeaveDebit.Api.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\OTApproval.Api\\OTApproval.Api.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\PayrollInterface.API\\PayrollInterface.Api.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\MISPunchApproval.Api\\MISPunchApproval.Api.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\AttendanceInterface.Api\\AttendanceInterface.Api.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\AuditTrail.Api\\AuditTrail.Api.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\LeaveEncashment.Api\\LeaveEncashment.Api.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\PunchDataTransferApi\\PunchDataTransferApi.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\PunchProcessWorkerSvc\\PunchProcessWorkerSvc\\PunchProcessWorkerSvc.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\PunchReceiveApi\\PunchReceiveApi.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\MailSenderWorkerSvc\\MailSenderWorkerSvc\\MailSenderWorkerSvc.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\TAM\\TAM.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\TAM.API\\TAM.API.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\ReportRequestWorkerSvc\\ReportRequestWorkerSvc.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\keyCloak.Api\\keyCloak.Api.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\PayMasters.Api\\PayMasters.Api.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\PayAdministrator.Api\\PayAdministrator.Api.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\PayOperation.Api\\PayOperation.Api.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\PayReport.Api\\PayReport.Api.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\PAYROLL\\PAYROLL.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\PaySalaryProcess.Api\\PaySalaryProcess.Api.csproj -p:PublishDir="publish"
+                dotnet publish %WORKSPACE%\\HRMSCore6\\PayTaxation.Api\\PayTaxation.Api.csproj -p:PublishDir="publish"
+                
+                
+                
+		
+		'''
+          }
+
+        }
+    }
+ /* stage('Unit Test'){
+  
+    steps{
+    
+     powershell ''' dotnet test "HRMSCore6/XUnitTestCanteen/XUnitTestCanteen.csproj" --logger "trx;LogFileName=UnitTests.xml" --no-build '''
+    }
+
+  } */
+   stage('Artifacts'){
+       steps{
+           
+           
+          stash allowEmpty: true, includes: '**/*.prjx', name: 'prjx'		 
+          archiveArtifacts artifacts: 'HRMSCore6/ReportRequestWorkerSvc/publish/**/*.*, HRMSCore6/Canteen.Api/publish/**/*.*, HRMSCore6/Canteen/publish/**/*.*, HRMSCore6/Access.Api/publish/**/*.*, HRMSCore6/Access/publish/**/*.*, HRMSCore6/Administration/publish/**/*.*, HRMSCore6/Administration.Api/publish/**/*.*, HRMSCore6/apiGateway/publish/**/*.*, HRMSCore6/DutyRoster/publish/**/*.*, HRMSCore6/DutyRoster.Api/publish/**/*.*, HRMSCore6/EmpMaster/publish/**/*.*, HRMSCore6/EmpMaster.Api/publish/**/*.*, HRMSCore6/ESSOperation/publish/**/*.*, HRMSCore6/ESSOperation.Api/publish/**/*.*, HRMSCore6/IdentityServer/publish/**/*.*, HRMSCore6/Reports/publish/**/*.*, HRMSCore6/Reports.Api/publish/**/*.*, HRMSCore6/TimeOffice/publish/**/*.*, HRMSCore6/TimeOffice.Api/publish/**/*.*, HRMSCore6/EmpMaster/Db Script/**/*.*, **/*.sql, HRMSCore6/DataProtection.Api/publish/**/*.*, HRMSCore6/LeaveCredit.API/publish/**/*.*, HRMSCore6/LeaveDebit.Api/publish/**/*.*, HRMSCore6/OTApproval.Api/publish/**/*.*, HRMSCore6/PayrollInterface.API/publish/**/*.*, HRMSCore6/MISPunchApproval.Api/publish/**/*.*, HRMSCore6/AttendanceInterface.Api/publish/**/*.*, HRMSCore6/AuditTrail.Api/publish/**/*.*, HRMSCore6/LeaveEncashment.Api/publish/**/*.*, HRMSCore6/PunchDataTransferApi/publish/**/*.*, HRMSCore6/PunchReceiveApi/publish/**/*.*, HRMSCore6/PunchProcessWorkerSvc/PunchProcessWorkerSvc/publish/**/*.*, HRMSCore6/MailSenderWorkerSvc/MailSenderWorkerSvc/publish/**/*.*, HRMSCore6/TAM/publish/**/*.*, HRMSCore6/TAM.API/publish/**/*.* , HRMSCore6/keyCloak.Api/publish/**/*.*, **/publish/**/*.* ', followSymlinks: false
+			build wait: false, job: 'HRMS CLOUD 2022 SONAR'
+	
+            
+       }
+   }/*
+   stage('Encryption'){
+       agent{
+           label 'Jenkins_Build_Slave'
+       }
+     options { skipDefaultCheckout() }
+       steps{
+           copyArtifacts fingerprintArtifacts: true, projectName: '${JOB_BASE_NAME}', selector: specific('${BUILD_ID}')
+           unstash 'prjx'
+		
+           bat ''' envelope.com -p TOS7X1.prjx  ''' 
+      		//	bat ''' envelope.com -p WMSAPI.prjx '''
+      			bat '''del %SingleDllPath%\\bin\\TOS7X1.dll '''
+      		//	bat '''del WMSAPI\\WMSAPI\\obj\\Debug\\Package\\PackageTmp\\bin\\WMSAPI.dll '''
+      			bat '''del %SingleDllPath%\\bin\\hasp_windows_104777.dll '''
+				bat '''del %SingleDllPath%\\bin\\hasp_windows_x64_104777.dll '''
+				bat '''del %SingleDllPath%\\bin\\haspvlib_104777.dll '''
+				bat '''del %SingleDllPath%\\bin\\haspdnert.dll '''
+				bat '''del %SingleDllPath%\\bin\\haspdnert_x64.dll '''
+				bat '''del %SingleDllPath%\\bin\\hasp_rt.exe '''
+			//	bat '''del WMSAPI\\WMSAPI\\obj\\Debug\\Package\\PackageTmp\\bin\\haspdnert.dll '''
+			//	bat '''del WMSAPI\\WMSAPI\\obj\\Debug\\Package\\PackageTmp\\bin\\haspdnert_x64.dll '''
+			//	bat '''del WMSAPI\\WMSAPI\\obj\\Debug\\Package\\PackageTmp\\bin\\hasp_rt.exe '''
+			//	bat '''del WMSAPI\\WMSAPI\\obj\\Debug\\Package\\PackageTmp\\bin\\hasp_windows_104777.dll '''
+			//	bat '''del WMSAPI\\WMSAPI\\obj\\Debug\\Package\\PackageTmp\\bin\\hasp_windows_x64_104777.dll '''
+			//	bat '''del WMSAPI\\WMSAPI\\obj\\Debug\\Package\\PackageTmp\\bin\\haspvlib_104777.dll '''
+				//bat '''del WMSAPI\\WMSAPI\\obj\\Debug\\Package\\PackageTmp\\bin\\hasp_windows_104777.dll '''
+				//bat '''del WMSAPI\\WMSAPI\\obj\\Debug\\Package\\PackageTmp\\bin\\hasp_windows_x64_104777.dll '''
+				//bat '''del WMSAPI\\WMSAPI\\obj\\Debug\\Package\\PackageTmp\\bin\\haspvlib_104777.dll'''
+         		bat "rd /s /q %SingleDllPath%\\DLL_Enc"
+			bat "mkdir %SingleDllPath%\\DLL_Enc"
+      			bat """ call Xcopy Out\\*.* %SingleDllPath%\\DLL_Enc\\ /E /H /C /I /Q /S"""
+      			bat """ call Xcopy Out\\*.* %SingleDllPath%\\bin\\ /E /H /C /I /Q /S"""      
+      		//	bat """ call Xcopy Out_WMS_API\\*.* WMSAPI\\WMSAPI\\obj\\Debug\\Package\\PackageTmp\\bin\\ /E /H /C /I /Q /S"""
+      			
+      		 archiveArtifacts artifacts: 'TOS7x1Rel7/obj/Debug/Package/PackageTmp//*.*', followSymlinks: false
+
+      			       }
+   }*/
+   stage('Deployment')
+   {
+	options { skipDefaultCheckout() }
+
+       when {
+                 beforeAgent true
+                 expression {
+                     return nodesByLabel('WINDOWS_2019').size() > 0
+                 }
+
+             }
+             
+       agent{
+           label 'WINDOWS_2019'
+       }
+       
+	
+       
+  
+  steps{
+      
+      catchError(buildResult: 'SUCCESS', stageResult: 'ABORTED'){
+      
+      //cleanWs()
+        bat """ echo %cd% """
+        
+        //bat """ rmdir /s /q """
+        
+       
+        script{
+
+        
+        try{
+         
+          
+          bat '''
+          
+           sc.exe stop PunchProcessWorkerService
+            sc.exe delete PunchProcessWorkerService  
+            
+            
+            sc.exe stop MailSenderWorkerService
+            sc.exe delete MailSenderWorkerService    
+            
+            sc.exe stop ReportRequestWorkerSvc
+            sc.exe delete ReportRequestWorkerSvc  
+            
+          
+          ''' 
+          
+        
+        powershell '''Import-Module IISAdministration
+        
+        
+        	
+            Stop-WebAppPool -Name "TimeOffice"
+	    Stop-WebAppPool -Name "TimeOffice.Api"
+	    Stop-WebAppPool -Name "HRMS_Master"
+	    Stop-WebAppPool -Name "HRMS_Master.Api"
+	    Stop-WebAppPool -Name "HRMS_Operation"
+	    Stop-WebAppPool -Name "HRMS_Operation.Api"
+	    Stop-WebAppPool -Name "HRMS_Reports"
+	    Stop-WebAppPool -Name "HRMS_Reports.Api"
+	    Stop-WebAppPool -Name "apiGateway"
+	    Stop-WebAppPool -Name "Access"
+	    Stop-WebAppPool -Name "Access.Api"
+	    Stop-WebAppPool -Name "Admin"
+	    Stop-WebAppPool -Name "Admin.Api"
+	    Stop-WebAppPool -Name "Canteen"
+	    Stop-WebAppPool -Name "Canteen.Api"
+	    Stop-WebAppPool -Name "DutyRoster"
+	    Stop-WebAppPool -Name "DutyRoster.Api"  
+            Stop-WebAppPool -Name "DataProtection.Api"
+            Stop-WebAppPool -Name "OTApproval.Api"
+            Stop-WebAppPool -Name "MISPunchApproval.Api"
+            Stop-WebAppPool -Name "AttendanceInterface.Api"
+            Stop-WebAppPool -Name "AuditTrail.Api"
+            Stop-WebAppPool -Name "PayrollInterface.API"
+            Stop-WebAppPool -Name "LeaveCredit.API"
+            Stop-WebAppPool -Name "LeaveDebit.Api"
+            Stop-WebAppPool -Name "LeaveEncashment.Api"
+            Stop-WebAppPool -Name "PunchReceiveApi"
+            Stop-WebAppPool -Name "PunchDataTransferApi"
+            Stop-WebAppPool -Name "TAM"
+	    Stop-WebAppPool -Name "TAM.API"
+            Stop-WebAppPool -Name "keyCloak.Api"
+            Stop-WebAppPool -Name "PayMasters.Api"
+            Stop-WebAppPool -Name "PaySalaryProcess.Api"
+            Stop-WebAppPool -Name "PayOperation.Api"
+            Stop-WebAppPool -Name "PayAdministrator.Api"
+            Stop-WebAppPool -Name "PayTaxation.Api"
+            Stop-WebAppPool -Name "PayReport.Api"
+            Stop-WebAppPool -Name "Payroll"
+            
+            
+            
+        
+        '''
+        
+        
+        
+           } catch (err) {
+      		echo err.getMessage()
+		}
+          
+        }
+        
+        
+        
+        
+        
+        
+     
+          
+          copyArtifacts fingerprintArtifacts: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_ID}')
+        
+        script{
+          
+      powershell '''
+      
+      #Powershell Script for Creating Website with port and protocol
+
+function Create-IISWebsite {
+    param(
+        [string]$SiteName,
+        [string]$Protocol,
+        [string]$BindingInformation,
+        [string]$PhysicalPath,
+        [int]$Port
+    )
+
+    Import-Module IISAdministration
+
+    $manager = Get-IISServerManager
+
+    if ($manager.ApplicationPools[$SiteName] -eq $null) {
+        # Application pool does not exist, create it...
+        $pool = $manager.ApplicationPools.Add($SiteName)
+
+        $pool.ManagedPipelineMode = "Integrated"
+        $pool.ManagedRuntimeVersion = "v4.0"
+        $pool.Enable32BitAppOnWin64 = $false
+        $pool.AutoStart = $true
+        $pool.StartMode = "OnDemand"
+        $pool.ProcessModel.IdentityType = "ApplicationPoolIdentity"
+    }
+
+    if ($manager.Sites[$SiteName] -eq $null) {
+        # Site does not exist, create it...
+        $site = $manager.Sites.Add($SiteName, $Protocol, "*:${Port}:", $PhysicalPath)
+        $site.Id = $Port
+
+        # Assign AppPool to Site...
+        $website = $manager.Sites[$SiteName]
+        $website.Applications["/"].ApplicationPoolName = $SiteName
+
+        $guid = [guid]::NewGuid().ToString("B")
+        # netsh http add sslcert ipport=0.0.0.0:$Port certhash=1444F259F420F38FEE0A710951A76ED31ED1686C appid="$guid"
+    }
+
+    $manager.CommitChanges()
+}
+
+# Example usage:
+
+Create-IISWebsite -SiteName "TimeOffice" -Protocol "https" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\TimeOffice\\publish" -Port 5002
+Create-IISWebsite -SiteName "TimeOffice.Api" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\TimeOffice.Api\\publish" -Port 8002
+Create-IISWebsite -SiteName "HRMS_Master" -Protocol "https" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\EmpMaster\\publish" -Port 5003
+Create-IISWebsite -SiteName "HRMS_Master.Api" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\EmpMaster.Api\\publish" -Port 8003
+Create-IISWebsite -SiteName "HRMS_Operation" -Protocol "https" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\ESSOperation\\publish" -Port 5004
+Create-IISWebsite -SiteName "HRMS_Operation.Api" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\ESSOperation.Api\\publish" -Port 8004
+Create-IISWebsite -SiteName "HRMS_Reports" -Protocol "https" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\Reports\\publish" -Port 5006
+Create-IISWebsite -SiteName "HRMS_Reports.Api" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\Reports.Api\\publish" -Port 8006
+Create-IISWebsite -SiteName "apiGateway" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\apiGateway\\publish" -Port 5000
+Create-IISWebsite -SiteName "Access" -Protocol "https" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\Access\\publish" -Port 5008
+Create-IISWebsite -SiteName "Access.Api" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\Access.Api\\publish" -Port 8008
+Create-IISWebsite -SiteName "Admin" -Protocol "https" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\Administration\\publish" -Port 5005
+Create-IISWebsite -SiteName "Admin.Api" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\Administration.Api\\publish" -Port 8005
+Create-IISWebsite -SiteName "Canteen" -Protocol "https" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\Canteen\\publish" -Port 5009
+Create-IISWebsite -SiteName "Canteen.Api" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\Canteen.Api\\publish" -Port 8009
+Create-IISWebsite -SiteName "DutyRoster" -Protocol "https" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\DutyRoster\\publish" -Port 5007
+Create-IISWebsite -SiteName "DutyRoster.Api" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\DutyRoster.Api\\publish" -Port 8007
+Create-IISWebsite -SiteName "DataProtection.Api" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\DataProtection.Api\\publish" -Port 8019
+Create-IISWebsite -SiteName "OTApproval.Api" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\OTApproval.Api\\publish" -Port 8028
+Create-IISWebsite -SiteName "MISPunchApproval.Api" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\MISPunchApproval.Api\\publish" -Port 8027
+Create-IISWebsite -SiteName "AttendanceInterface.Api" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\AttendanceInterface.Api\\publish" -Port 8021
+Create-IISWebsite -SiteName "AuditTrail.Api" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\AuditTrail.Api\\publish" -Port 8024
+Create-IISWebsite -SiteName "PayrollInterface.API" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\PayrollInterface.API\\publish" -Port 8022
+Create-IISWebsite -SiteName "LeaveCredit.API" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\LeaveCredit.API\\publish" -Port 8023
+Create-IISWebsite -SiteName "LeaveDebit.Api" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\LeaveDebit.Api\\publish" -Port 8025
+Create-IISWebsite -SiteName "LeaveEncashment.Api" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\LeaveEncashment.Api\\publish" -Port 8026
+Create-IISWebsite -SiteName "PunchDataTransferApi" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\PunchDataTransferApi\\publish" -Port 8030
+Create-IISWebsite -SiteName "PunchReceiveApi" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\PunchReceiveApi\\publish" -Port 8029
+Create-IISWebsite -SiteName "TAM" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\TAM\\publish" -Port 5010
+Create-IISWebsite -SiteName "TAM.API" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\TAM.API\\publish" -Port 8031
+Create-IISWebsite -SiteName "keyCloak.Api" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\keyCloak.Api\\publish" -Port 8032
+Create-IISWebsite -SiteName "PayMasters.Api" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\PayMasters.Api\\publish" -Port 8033
+Create-IISWebsite -SiteName "PaySalaryProcess.Api" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\PaySalaryProcess.Api\\publish" -Port 8034
+Create-IISWebsite -SiteName "PayOperation.Api" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\PayOperation.Api\\publish" -Port 8035
+Create-IISWebsite -SiteName "PayAdministrator.Api" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\PayAdministrator.Api\\publish" -Port 8036
+Create-IISWebsite -SiteName "PayTaxation.Api" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\PayTaxation.Api\\publish" -Port 8037
+Create-IISWebsite -SiteName "PayReport.Api" -Protocol "http" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\PayReport.Api\\publish" -Port 8038
+Create-IISWebsite -SiteName "Payroll" -Protocol "https" -PhysicalPath "${env:WORKSPACE}\\HRMSCore6\\PAYROLL\\publish" -Port 5012
+
+
+Import-Module IISAdministration
+
+    $manager = Get-IISServerManager
+
+# Change for a top-level website
+$manager.Sites["TimeOffice"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\TimeOffice\\publish"
+$manager.Sites["TimeOffice.Api"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\TimeOffice.Api\\publish"
+$manager.Sites["HRMS_Master"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\EmpMaster\\publish"
+$manager.Sites["HRMS_Master.Api"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\EmpMaster.Api\\publish"
+$manager.Sites["HRMS_Operation"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\ESSOperation\\publish"
+$manager.Sites["HRMS_Operation.Api"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\ESSOperation.Api\\publish"
+$manager.Sites["HRMS_Reports"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\Reports\\publish"
+$manager.Sites["HRMS_Reports.Api"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\Reports.Api\\publish"
+$manager.Sites["apiGateway"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\apiGateway\\publish"
+$manager.Sites["Access"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\Access\\publish"
+$manager.Sites["Access.Api"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\Access.Api\\publish"
+$manager.Sites["Admin"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\Administration\\publish"
+$manager.Sites["Admin.Api"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\Administration.Api\\publish"
+$manager.Sites["Canteen"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\Canteen\\publish"
+$manager.Sites["Canteen.Api"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\Canteen.Api\\publish"
+$manager.Sites["DutyRoster"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\DutyRoster\\publish"
+$manager.Sites["DutyRoster.Api"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\DutyRoster.Api\\publish"
+$manager.Sites["DataProtection.Api"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\DataProtection.Api\\publish"
+$manager.Sites["OTApproval.Api"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\OTApproval.Api\\publish"
+$manager.Sites["MISPunchApproval.Api"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\MISPunchApproval.Api\\publish"
+$manager.Sites["AttendanceInterface.Api"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\AttendanceInterface.Api\\publish"
+$manager.Sites["AuditTrail.Api"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\AuditTrail.Api\\publish"
+$manager.Sites["PayrollInterface.API"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\PayrollInterface.API\\publish"
+$manager.Sites["LeaveCredit.API"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\LeaveCredit.API\\publish"
+$manager.Sites["LeaveDebit.Api"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\LeaveDebit.Api\\publish"
+$manager.Sites["LeaveEncashment.Api"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\LeaveEncashment.Api\\publish"
+$manager.Sites["PunchReceiveApi"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\PunchReceiveApi\\publish"
+$manager.Sites["PunchDataTransferApi"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\PunchDataTransferApi\\publish"
+$manager.Sites["TAM"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\TAM\\publish"
+$manager.Sites["TAM.API"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\TAM.API\\publish"
+$manager.Sites["keyCloak.Api"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\keyCloak.Api\\publish"
+$manager.Sites["PayMasters.Api"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\PayMasters.Api\\publish"
+$manager.Sites["PaySalaryProcess.Api"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\PaySalaryProcess.Api\\publish"
+$manager.Sites["PayOperation.Api"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\PayOperation.Api\\publish"
+$manager.Sites["PayAdministrator.Api"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\PayAdministrator.Api\\publish"
+$manager.Sites["PayTaxation.Api"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\PayTaxation.Api\\publish"
+$manager.Sites["PayReport.Api"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\PayReport.Api\\publish"
+$manager.Sites["Payroll"].Applications["/"].VirtualDirectories["/"].PhysicalPath = "${env:WORKSPACE}\\HRMSCore6\\PAYROLL\\publish"
+
+
+
+# Change for an app within a website
+#$manager.Sites["Website1"].Applications["/MyApp"].VirtualDirectories["/"].PhysicalPath = "C:\\Sites\\Website1\\1.1"
+
+Start-WebAppPool -Name "TimeOffice"
+Start-WebAppPool -Name "TimeOffice.Api"
+Start-WebAppPool -Name "HRMS_Master"
+Start-WebAppPool -Name "HRMS_Master.Api"
+Start-WebAppPool -Name "HRMS_Operation"
+Start-WebAppPool -Name "HRMS_Operation.Api"
+Start-WebAppPool -Name "HRMS_Reports"
+Start-WebAppPool -Name "HRMS_Reports.Api"
+Start-WebAppPool -Name "apiGateway"
+Start-WebAppPool -Name "Access"
+Start-WebAppPool -Name "Access.Api"
+Start-WebAppPool -Name "Admin"
+Start-WebAppPool -Name "Admin.Api"
+Start-WebAppPool -Name "Canteen"
+Start-WebAppPool -Name "Canteen.Api"
+Start-WebAppPool -Name "DutyRoster"
+Start-WebAppPool -Name "DutyRoster.Api"
+Start-WebAppPool -Name "DataProtection.Api"
+Start-WebAppPool -Name "OTApproval.Api"
+Start-WebAppPool -Name "MISPunchApproval.Api"
+Start-WebAppPool -Name "AttendanceInterface.Api"
+Start-WebAppPool -Name "AuditTrail.Api"
+Start-WebAppPool -Name "PayrollInterface.API"
+Start-WebAppPool -Name "LeaveCredit.API"
+Start-WebAppPool -Name "LeaveDebit.Api"
+Start-WebAppPool -Name "LeaveEncashment.Api"
+Start-WebAppPool -Name "PunchReceiveApi"
+Start-WebAppPool -Name "PunchDataTransferApi"
+Start-WebAppPool -Name "TAM"
+Start-WebAppPool -Name "TAM.API"
+Start-WebAppPool -Name "keyCloak.Api"
+Start-WebAppPool -Name "PayMasters.Api"
+Start-WebAppPool -Name "PaySalaryProcess.Api"
+Start-WebAppPool -Name "PayOperation.Api"
+Start-WebAppPool -Name "PayAdministrator.Api"
+Start-WebAppPool -Name "PayTaxation.Api"
+Start-WebAppPool -Name "PayReport.Api"
+Start-WebAppPool -Name "Payroll"
+
+
+$manager.CommitChanges()'''  
+          
+          bat ''' 
+          
+          	c:
+          
+         	cd Windows\\System32                     
+          	sc.exe create "PunchProcessWorkerService" binpath="%WORKSPACE%\\HRMSCore6\\PunchProcessWorkerSvc\\PunchProcessWorkerSvc\\publish\\PunchProcessWorkerSvc.exe"
+			sc.exe description PunchProcessWorkerService "Punch Process Worker Service"
+            sc start PunchProcessWorkerService
+            
+            sc.exe create "MailSenderWorkerService" binpath="%WORKSPACE%\\HRMSCore6\\MailSenderWorkerSvc\\MailSenderWorkerSvc\\publish\\MailSenderWorkerSvc.exe"
+			sc.exe description MailSenderWorkerService "Mail Sender Worker Service"
+            sc start MailSenderWorkerService
+            
+            sc.exe create "ReportRequestWorkerSvc" binpath="%WORKSPACE%\\HRMSCore6\\ReportRequestWorkerSvc\\publish\\ReportRequestWorkerSvc.exe"
+			sc.exe description ReportRequestWorkerSvc "Report Request Worker Service"
+            sc start ReportRequestWorkerSvc
+          
+          
+          '''
+          
+        }
+      
+     
+          
+          
+          //Copying LIC File
+   /*  bat '''call F:
+      cd "F:\\STANDARD_MEMORY\\STANDARD_MEMORY\\TOS921 PR"
+      del "%WORKSPACE%\\TOS9X1\\obj\\Debug\\Package\\PackageTmp\\SAVIORLIC.LIC"
+      call Xcopy SAVIORLIC.LIC %WORKSPACE%\\TOS9X1\\obj\\Debug\\Package\\PackageTmp\\ /E /H /C /I /Q /S'''  */
+      
+      }
+  }
+  
+     
+  
+   }
+
+   stage('VAPT')
+   {
+	options { skipDefaultCheckout() }
+    when {
+                 beforeAgent true
+                 expression {
+                     JOB_BASE_NAME == "HRMS_CLOUD_CORE6_2019"
+                 }
+
+             }
+
+             agent{
+           label 'WINDOWS_2019'
+       }
+     
+     steps{
+	
+       script{
+       powershell''' 
+
+        #cd "${env:WORKSPACE}\\HRMSCore6\\"
+        $rootDirectory = "${env:WORKSPACE}\\HRMSCore6\\"
+        Write-Host "$rootDirectory"
+
+        # Specify the directories where your web.config files are located
+        #$directories = @("ESSOperation.Api", "Administration.Api", "EmpMaster.Api", "TimeOffice.Api", "Reports.Api", "Access.Api", "DutyRoster.Api", "LeaveCredit.API", "DataProtection.Api", "LeaveDebit.Api", "OTApproval.Api", "PayrollInterface.Api", "MISPunchApproval.Api", "AttendanceInterface.Api", "AuditTrail.Api", "LeaveEncashment.Api", "PunchDataTransferApi", "TAM.API")
+        $directories = Get-ChildItem -Path $rootDirectory -Filter "web.config" -Recurse | ForEach-Object { $_.Directory }
+
+
+        # Specify the values you want to find and replace
+        $oldValue1 = "Staging"
+        $newValue1 = "StagingPG"
+
+
+
+        foreach ($directory in $directories) {
+        # Get all web.config files in the current directory
+        $webConfigFiles = Get-ChildItem -Path $directory -Filter "web.config" -Recurse
+
+        foreach ($file in $webConfigFiles) {
+        # Read the content of the web.config file
+        $content = Get-Content $file.FullName -Raw
+        
+        Write-Host "$content"
+
+        # Perform the replacements
+        $content = $content -replace [regex]::Escape($oldValue1), $newValue1
+        
+        Write-Host "$content"
+        
+
+        # Write the modified content back to the file
+        Set-Content -Path $file.FullName -Value $content
+    }
+
+    Write-Host "Replacements in $directory completed."
+}
+
+       '''
+       
+       echo "No Web Config Change"
+         
+       }
+     
+     build wait: false, job: 'HRMS CLOUD 2022 SONAR'
+     build wait: false, job: 'HRMS_Accunetix'
+     
+     }
+     
+
+   }
+}
+    post {
+        
+       success{
+           
+           echo 'Successful Run'
+                   //build wait: false, job: 'STANDARD_WMS1x1_Project_Sonar'  
+       }
+            
+ always {
+   			 
+   //step ([$class: 'MSTestPublisher', testResultsFile:"**/TestResults/UnitTests.xml", failOnError: true, keepLongStdio: true])
+
+   
+   cleanWs()
+          }
+    
+  
+ // unstable {
+    // One or more steps need to be included within each condition's block.
+  //}
+  cleanup {
+      cleanWs()
+    // One or more steps need to be included within each condition's block.
+  }
+ changed {
+     script{ 
+     def var = new Mailto()
+   	 var.erp()
+     var.qas()
+   // One or more steps need to be included within each condition's block.
+ } }
+ failure{
+	script{ 
+     def var = new Mailto()
+   	 var.erp()
+     var.qas()
+   // One or more steps need to be included within each condition's block.
+ }}
+}
+}
